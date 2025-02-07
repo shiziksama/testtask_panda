@@ -6,17 +6,15 @@ use App\Models\Email;
 use App\Models\Url;
 use App\Services\EmailService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class SubscriptionController {
-    public function subscribe(Request $request, Response $response, array $args): Response {
-        $data = $request->getParsedBody();
-        $urlValue = $data['url'];
-        $emailValue = $data['email'];
+    public function subscribe(Request $request){
+        $urlValue = $request->get('url');
+        $emailValue = $request->get('email');
 
         // Validate input
         if (filter_var($emailValue, FILTER_VALIDATE_EMAIL) === false || empty($urlValue)) {
-            return $response->withStatus(400)->withJson(['error' => 'Invalid input']);
+            return response()->json(['error' => 'Invalid input'],400);
         }
 
         // Check if URL exists
@@ -37,12 +35,12 @@ class SubscriptionController {
 
         // Check if subscription already exists for the given URL and email
         if ($url->emails()->where('email_id', $email->id)->exists()) {
-            return $response->withStatus(200)->withJson(['message' => 'Already subscribed']);
+            return response()->json(['message' => 'Already subscribed'],200);
         }
 
         // Create new subscription
         $url->emails()->attach($email->id);
 
-        return $response->withStatus(201)->withJson(['message' => 'Subscribed successfully']);
+        return response()->json(['message' => 'Subscribed successfully'],200);
     }
 }
