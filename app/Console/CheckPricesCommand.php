@@ -13,17 +13,16 @@ class CheckPricesCommand extends Command {
     protected $description = 'Check prices of subscribed OLX listings and send notifications if they change';
 
     public function handle() {
-
         $urls = Url::has('emails')->get();
+        $scraper = app(OLXScraper::class);
 
         foreach ($urls as $url) {
-            $currentPrice = OLXScraper::getPrice($url->url);
+            $currentPrice = $scraper->getPrice($url->url);
             if ($currentPrice !== null) {
-                
                 if ($currentPrice != $url->price) {
-                    $url->price=$currentPrice;
+                    $url->price = $currentPrice;
                     $url->save();
-                    foreach($url->emails as $email){
+                    foreach ($url->emails as $email) {
                         Mail::to($email->email)->send(new PriceChanged($url));
                     }
                 }
