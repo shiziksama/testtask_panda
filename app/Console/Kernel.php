@@ -7,12 +7,16 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    protected $commands = [
+        \App\Console\CheckPricesCommand::class,
+    ];
+
     /**
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('check:prices')->everyFiveMinutes();
+        $schedule->command('prices:check')->everyFiveMinutes();
         // $schedule->command('inspire')->hourly();
     }
 
