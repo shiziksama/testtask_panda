@@ -1,22 +1,25 @@
+version: '3.8'
+
 services:
   app:
     build: .
     ports:
       - "8000:8000"
     volumes:
-      - .:/var/www/html
+      - .:/var/www
     environment:
       - DB_CONNECTION=sqlite
-      - DB_DATABASE=/var/www/html/database/database.sqlite
+      - DB_DATABASE=/var/www/database/database.sqlite
     command: >
       sh -c "[ ! -f .env ] && cp .env.example .env || true &&
+             [ ! -f /var/www/database/database.sqlite ] && touch /var/www/database/database.sqlite || true &&
+             [ ! -d vendor ] && composer install --no-interaction --no-progress --optimize-autoloader || true &&
              php artisan key:generate &&
-             touch /var/www/database/database.sqlite &&
              php artisan migrate --force &&
              php artisan serve --host=0.0.0.0 --port=8000"
+
   mailhog:
     image: mailhog/mailhog
     ports:
       - "8025:8025"
       - "1025:1025"
-

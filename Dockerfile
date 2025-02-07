@@ -1,21 +1,23 @@
 FROM php:8.2-fpm-alpine
 
+# Встановлення необхідних бібліотек
 RUN apk add --no-cache php-mysqli php-gd php-curl php-mbstring php-xml php-json php-session php-sqlite3 sqlite
 
-# Set the working directory
-WORKDIR /var/www/html
+# Встановлюємо Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy the application code to the container
-COPY . /var/www/html
+# Встановлюємо робочу директорію
+WORKDIR /var/www
 
-# Install Composer
-COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-# Install PHP dependencies
-RUN composer install --no-interaction --no-progress --optimize-autoloader
+# Копіюємо весь Laravel-код у контейнер
+COPY . .
 
-# Expose the application port (adjust if necessary)
+# Виставляємо права для storage та bootstrap/cache
+RUN chmod -R 777 storage bootstrap/cache
+
+# Відкриваємо порт 8000
 EXPOSE 8000
 
-# Command to run the application
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# Запускаємо Laravel сервер
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
