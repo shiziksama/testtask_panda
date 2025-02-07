@@ -12,7 +12,7 @@ COPY . /var/www/html
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Install PHP dependencies
-RUN composer install
+RUN composer install --no-interaction --no-progress --optimize-autoloader
 
 # Expose the application port (adjust if necessary)
 EXPOSE 8000
