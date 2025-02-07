@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 
 class OLXScraper {
-    public function getPrice(string $url): ?float {
+    public static function getPrice(string $url): ?float {
         $response = Http::get($url);
         if (!$response->successful()) {
             return null;

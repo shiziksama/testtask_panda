@@ -16,10 +16,8 @@ class CheckPricesCommand extends Command {
 
         $urls = Url::has('emails')->get();
 
-        $scraper = new OLXScraper();
-
         foreach ($urls as $url) {
-            $currentPrice = $scraper->getPrice($url->url);
+            $currentPrice = OLXScraper::getPrice($url->url);
             if ($currentPrice !== null) {
                 
                 if ($currentPrice != $url->price) {
@@ -28,7 +26,6 @@ class CheckPricesCommand extends Command {
                     foreach($url->emails as $email){
                         Mail::to($email->email)->send(new PriceChanged($url));
                     }
-            
                 }
             }
         }
