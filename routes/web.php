@@ -15,7 +15,7 @@ use App\Http\Controllers\SubscriptionController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('main');
 });
 
 Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
